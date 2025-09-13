@@ -9,15 +9,6 @@ El objetivo es que puedan levantarlo rápido, entender cómo se comunican los se
 
 ---
 
-## 📖 Descripción
-
-Este repo es un <strong>proyecto de práctica</strong> para trabajar con una arquitectura de microservicios usando 
-<strong>NestJS</strong> y distintas bases de datos (<strong>PostgreSQL</strong>, <strong>MySQL</strong> y <strong>MongoDB</strong>).  
-
-El objetivo es que puedan levantarlo rápido, entender cómo se comunican los servicios y tener una base para iterar.
-
----
-
 ## 🏗️ Arquitectura
 
 <ul>
@@ -83,5 +74,52 @@ El objetivo es que puedan levantarlo rápido, entender cómo se comunican los se
 <table>
   <tr><th>Variable</th><th>Ejemplo</th><th>Descripción</th></tr>
   <tr><td><code>PORT</code></td><td>3003</td><td>Puerto del servicio</td></tr>
-  <tr><td><code>DATABASE_URL</code></td><td>mongodb://localhost:27017/facturasdb?replicaSet=rs0</td><td>Conexión a MongoDB</td></tr>
+
+--- 
+
+## 🐳 Bases de datos con Docker
+<p><strong>Levantar las bases de datos</strong> desde la raíz del repo:</p>
+<pre><code>docker compose up -d
+</code></pre>
+
+<p><strong>Servicios incluidos &amp; puertos (host)</strong></p>
+<ul>
+  <li>🐘 PostgreSQL → <code>5433</code></li>
+  <li>🐬 MySQL → <code>3307</code></li>
+  <li>🍃 MongoDB → <code>27017</code></li>
+</ul>
+
+--- 
+
+## ▶️ Arrancar los microservicios
+<p>Iniciar cada servicio en <em>terminal separada</em>:</p>
+
+<h3>🌐 Gateway</h3>
+<pre><code>cd gateway
+npm install
+npm run start:dev
+</code></pre>
+
+<h3>👤 Usuarios MS</h3>
+<pre><code>cd usuarios-ms
+npm install
+npx prisma generate
+npx prisma migrate deploy
+npx prisma db seed   # crea el usuario admin definido en prisma/seed.ts
+npm run start:dev
+</code></pre>
+
+<h3>🛒 Productos MS</h3>
+<pre><code>cd products
+npm install
+npm run start:dev
+</code></pre>
+
+<h3>📑 Facturas MS</h3>
+<pre><code>cd facturas-ms
+npm install
+npm run start:dev
+</code></pre>
+
+-- --  <tr><td><code>DATABASE_URL</code></td><td>mongodb://localhost:27017/facturasdb?replicaSet=rs0</td><td>Conexión a MongoDB</td></tr>
 </table>
