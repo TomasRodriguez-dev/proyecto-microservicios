@@ -2,7 +2,6 @@
 
 <p align="center">
   <strong>Microservicios con NestJS, PostgreSQL, MySQL, MongoDB y Angular</strong><br/>
-  <em>Un proyecto de práctica para aprender arquitectura distribuida</em>
 </p>
 
 ---
