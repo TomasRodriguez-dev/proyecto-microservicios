@@ -31,7 +31,7 @@ El objetivo es que puedan levantarlo rápido, entender cómo se comunican los se
 
 --- 
 
-## ⚙️ Variables de Entorno<
+## ⚙️ Variables de Entorno
 
 <h3>🌐 Gateway</h3>
 
@@ -74,6 +74,8 @@ El objetivo es que puedan levantarlo rápido, entender cómo se comunican los se
 <table>
   <tr><th>Variable</th><th>Ejemplo</th><th>Descripción</th></tr>
   <tr><td><code>PORT</code></td><td>3003</td><td>Puerto del servicio</td></tr>
+  <tr><td><code>DATABASE_URL</code></td><td>mongodb://localhost:27017/facturasdb?replicaSet=rs0</td><td>Conexión a MongoDB</td></tr>
+</table>
 
 --- 
 
@@ -121,5 +123,7 @@ npm install
 npm run start:dev
 </code></pre>
 
--- --  <tr><td><code>DATABASE_URL</code></td><td>mongodb://localhost:27017/facturasdb?replicaSet=rs0</td><td>Conexión a MongoDB</td></tr>
-</table>
+---
+
+## 📚 Swagger / Endpoints
+<p><strong>La documentación está en <code>/docs</code> para cada servicio y poder realizar las pruebas.</strong></p>
