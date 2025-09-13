@@ -1,0 +1,10 @@
+# Todos los archivos de texto normalizados a LF en el repo
+* text=auto eol=lf
+
+# Archivos específicos que siempre deben usar LF
+*.ts text eol=lf
+*.js text eol=lf
+*.sql text eol=lf
+*.prisma text eol=lf
+*.toml text eol=lf
+*.md text eol=lf

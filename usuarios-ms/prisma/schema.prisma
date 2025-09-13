@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  roles     String                 // 'ADMIN,USER'
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  carts     Cart[]
+
+  @@index([email])
+  @@index([isActive])
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [iduser], references: [id], onDelete: Cascade)
+  iduser    Int        @unique           // 1 carrito por usuario 
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([updatedAt])
+}
+
+model CartItem {
+  id            Int      @id @default(autoincrement())
+  cart          Cart     @relation(fields: [idcart], references: [id], onDelete: Cascade)
+  idcart        Int
+  idproduct     Int
+  quantity      Int
+  idreservation Int      @unique   
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([idcart])
+  @@unique([idcart, idproduct])
+}
