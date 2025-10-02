@@ -1,0 +1,65 @@
+:host ::ng-deep .p-toast {
+    .p-toast-message {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: .5rem 0 !important;
+    }
+
+    .p-toast-close-button {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 28px; height: 28px;
+        display: flex; align-items: center; justify-content: center;
+        border: 0; background: transparent; cursor: pointer;
+        color: #9ca3af; transition: color .2s, background .2s;
+        border-radius: 8px;
+    }
+    .p-toast-close-button:hover { color: #374151; background: #f3f4f6; }
+    .p-toast-close-icon { font-size: 14px; }
+    
+}
+
+.toast-card {
+    position: relative;
+    overflow: hidden;                    
+    display: flex; align-items: center; gap: 12px;
+    width: 420px;                       
+    padding: 14px 44px 14px 16px;         
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(17,24,39,.08);
+    animation: toastSlideIn .28s ease-out;
+}
+
+.toast-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--tone-15) 0%, var(--tone-08) 22%, transparent 48%);
+    pointer-events: none;
+}
+
+.toast-card__icon {
+    position: relative; z-index: 1;     
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: #FFF;
+    color: var(--accent);
+    font-size: 18px;
+}
+
+.toast-card__content { flex: 1; min-width: 0; }
+.toast-card__title   { font-weight: 700; font-size: .95rem; color: #0f172a; }
+.toast-card__detail  { font-size: .86rem; color: #64748b; margin-top: 2px; word-break: break-word; }
+
+.toast--info    { --accent:#3b82f6; --soft-bg:#e8f1ff; --tone-15:rgba(59,130,246,.16); --tone-08:rgba(59,130,246,.08); }
+.toast--success { --accent:#22c55e; --soft-bg:#eafbf1; --tone-15:rgba(34,197,94,.16);  --tone-08:rgba(34,197,94,.08); }
+.toast--warn    { --accent:#f59e0b; --soft-bg:#fff5d7; --tone-15:rgba(245,158,11,.18); --tone-08:rgba(245,158,11,.08); }
+.toast--error   { --accent:#ef4444; --soft-bg:#ffe7e7; --tone-15:rgba(239,68,68,.18);  --tone-08:rgba(239,68,68,.08); }
+
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}

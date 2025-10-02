@@ -1,0 +1,26 @@
+<p-toast key="app" position="top-right">
+    <ng-template let-message pTemplate>
+        <div class="toast-card"
+            [ngClass]="{
+                'toast--info': message.severity === 'info',
+                'toast--success': message.severity === 'success',
+                'toast--warn': message.severity === 'warn',
+                'toast--error': message.severity === 'error'
+            }">
+            <!-- Ícono -->
+            <div class="toast-card__icon">
+                <i class="pi" [ngClass]="iconFor(message.severity)"></i>
+            </div>
+
+            <!-- Texto -->
+            <div class="toast-card__content">
+                <div class="toast-card__title">{{ message.summary }}</div>
+                <div class="toast-card__detail">{{ message.detail }}</div>
+            </div>
+
+            <button type="button" class="p-toast-close-button">
+                <i class="pi pi-times p-toast-close-icon"></i>
+            </button>
+        </div>
+    </ng-template>
+</p-toast>

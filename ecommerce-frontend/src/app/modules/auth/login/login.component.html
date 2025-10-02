@@ -1,0 +1,65 @@
+<div class="flex items-center justify-center h-full w-full">
+  <div class="w-full max-w-md">
+    <!-- Encabezado -->
+    <h2 class="text-4xl font-bold mb-6">Iniciar Sesión</h2>
+    <!-- Formulario -->
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+      <!-- Email -->
+      <div class="flex flex-col gap-2">
+        <label for="email" class="text-base font-semibold">Email</label>
+        <input pInputText type="email" id="email" formControlName="email"
+          placeholder="Ingrese Email" class="w-full" [invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+        />
+        <small *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched" class="text-red-500">
+          El email es obligatorio
+        </small>
+        <small *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched" class="text-red-500">
+          El email no es válido
+        </small>
+      </div>  
+      <!-- Password -->
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-base font-semibold">Contraseña</label>
+        <p-password formControlName="password" inputId="password" [feedback]="true"
+          [toggleMask]="true" placeholder="Ingrese Contraseña" class="w-full" inputStyleClass="w-full"
+          [invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+        >
+          <ng-template pTemplate="header">
+            <div class="font-semibold text-sm mb-2">Requisitos de la contraseña</div>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+            <ul class="pl-2 my-0 leading-normal text-sm space-y-1">
+              <li *ngIf="!hasLower">Al menos una minúscula</li>
+              <li *ngIf="!hasUpper">Al menos una mayúscula</li>
+              <li *ngIf="!hasNumber">Al menos un número</li>
+              <li *ngIf="!hasMinLength">Mínimo 8 caracteres</li>
+            </ul>
+          </ng-template>
+        </p-password>
+        <small *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched" class="text-red-500">
+          La contraseña es obligatorio
+        </small>
+      </div>
+      <!-- Boton OnSubmit -->
+      <button pButton type="submit" class="w-full flex items-center justify-center gap-2 transition-all duration-300"
+        [disabled]="loading"
+      >
+        <!-- Spinner -->
+        <i *ngIf="loading" class="pi pi-spin pi-spinner text-white animate-spin"></i>
+
+        <!-- Check con animación -->
+        <i *ngIf="success && !loading" class="pi pi-check text-white transform scale-125 animate-bounce"></i>
+
+        <!-- Texto -->
+        <span *ngIf="!loading && !success" class="transition-opacity duration-300">Ingresar</span>
+      </button>
+    </form>
+    <p class="mt-6 text-sm text-center">
+      ¿No tenés cuenta?
+      <a [routerLink]="['/auth/register']" class="text-blue-600">
+        Crear cuenta
+      </a>
+    </p>
+  </div>
+</div>

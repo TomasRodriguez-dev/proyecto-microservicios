@@ -1,0 +1,41 @@
+<p-dialog [(visible)]="visible" modal="true" [closable]="false" [dismissableMask]="false"
+    styleClass="max-w-md w-full rounded-2xl shadow-2xl p-0 overflow-hidden border-0 animate-fade-in">
+
+    <div class="text-center py-4 px-6">
+        <!-- Ícono central con animación pulse -->
+        <div class="flex justify-center mb-4">
+            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 animate-pulse shadow-inner">
+                <i class="pi pi-clock text-3xl"></i>
+            </div>
+        </div>
+
+        <!-- Título -->
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Sesión por expirar</h2>
+        <p class="text-gray-600">Tu sesión está a punto de expirar.</p>
+
+        <!-- Contador animado -->
+        <p [ngClass]="{
+            'text-blue-600': countdown > 30,
+            'text-orange-500': countdown <= 30 && countdown > 10,
+            'text-red-600 animate-shake': countdown <= 10
+        }"
+        class="text-2xl font-extrabold mt-4 animate-countdown">
+                {{ countdown }}s restantes
+        </p>
+
+        <!-- Botones -->
+        <div class="mt-6 flex justify-center gap-4">
+            <!-- Cerrar sesión -->
+            <button pButton class="!flex !items-center !gap-2 !whitespace-nowrap !bg-white border-2 border-red-500 text-red-600 hover:!bg-red-50 font-semibold px-5 py-2 rounded-lg shadow-sm transition-all"
+                icon="pi pi-sign-out" label="Cerrar sesión"
+                (click)="logout()">
+            </button>
+
+            <!-- Extender sesión -->
+            <button pButton class="!flex !items-center !gap-2 !whitespace-nowrap text-white font-semibold px-5 py-2 rounded-lg shadow-md transition-all bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                icon="pi pi-refresh" label="Extender sesión"
+                (click)="extendSession()">
+            </button>
+        </div>
+    </div>
+</p-dialog>

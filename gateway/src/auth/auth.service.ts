@@ -24,21 +24,40 @@ export class AuthService {
         }
     }
 
-    async login(user: any): Promise<{ access_token: string; user: any }> {
+    async login(user: any): Promise<{ access_token: string; refresh_token: string; user: any }> {
         const payload = { sub: user.id, roles: user.roles };
-        return {
-            access_token: this.jwt.sign(payload),
-            user,
-        };
+
+        const access_token = this.jwt.sign(payload, {
+            secret: process.env.JWT_SECRET,
+            expiresIn: process.env.JWT_EXPIRES || '30m',
+        });
+
+        const refresh_token = this.jwt.sign(payload, {
+            secret: process.env.JWT_REFRESH_SECRET,
+            expiresIn: process.env.JWT_REFRESH_EXPIRES || '7d',
+        });
+
+        return { access_token, refresh_token, user };
     }
 
-    async register(dto: { email: string; password: string }): Promise<{ access_token: string; user: any }> {
+    async register(dto: { email: string; password: string }): Promise<{ access_token: string; refresh_token: string; user: any }> {
         try {
             const user = await firstValueFrom(
                 this.usersClient.send('users.create', { ...dto, roles: 'USER' }),
             );
             const payload = { sub: user.id, roles: user.roles };
-            return { access_token: this.jwt.sign(payload), user };
+
+            const access_token = this.jwt.sign(payload, {
+                secret: process.env.JWT_SECRET,
+                expiresIn: process.env.JWT_EXPIRES || '30m',
+            });
+
+            const refresh_token = this.jwt.sign(payload, {
+                secret: process.env.JWT_REFRESH_SECRET,
+                expiresIn: process.env.JWT_REFRESH_EXPIRES || '7d',
+            });
+
+            return { access_token, refresh_token, user };
         } catch (err) {
             handleRpcError(err, 'Error al registrar usuario');
             throw err; 
@@ -51,6 +70,23 @@ export class AuthService {
         } catch (err) {
             handleRpcError(err, 'Usuario no encontrado');
             throw err; 
+        }
+    }
+
+    async refresh(refreshToken: string): Promise<{ access_token: string }> {
+        try {
+            const payload = this.jwt.verify(refreshToken, {
+                secret: process.env.JWT_REFRESH_SECRET,
+            });
+
+            const newAccessToken = this.jwt.sign(
+                { sub: payload.sub, roles: payload.roles },
+                { secret: process.env.JWT_SECRET, expiresIn: process.env.JWT_EXPIRES || '30m' },
+            );
+
+            return { access_token: newAccessToken };
+        } catch (err) {
+            throw new UnauthorizedException('Refresh token inválido o expirado');
         }
     }
 }

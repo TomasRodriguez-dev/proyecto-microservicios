@@ -9,6 +9,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new HttpExceptionEnvelopeFilter());
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Gateway')
