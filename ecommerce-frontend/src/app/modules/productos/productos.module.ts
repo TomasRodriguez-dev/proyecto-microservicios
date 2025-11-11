@@ -14,10 +14,12 @@ import { AppAlertService } from '../../shared/service/alert.service';
 import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SaveProductoComponent } from './components/save-producto/save-producto.component';
+import { ProductosService } from './service/productos.service';
 
 @NgModule({
     declarations: [
-        ProductosComponent
+        ProductosComponent, SaveProductoComponent
     ],
     imports: [
         CommonModule,
@@ -33,6 +35,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
         TablaDinamicaModule,
         ConfirmDialogModule
     ],
-    providers: [FormBuilder, AppAlertService, ConfirmationService, DialogService],
+    providers: [FormBuilder, AppAlertService, ConfirmationService, DialogService, ProductosService],
 })
 export class ProductosModule {}

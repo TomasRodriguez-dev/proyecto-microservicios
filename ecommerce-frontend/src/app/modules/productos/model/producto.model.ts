@@ -1,7 +1,7 @@
 export interface IProducto {
     id: number;
     name: string;
-    price: string;
+    price: number;
     stock: number;
-    isActive: boolean;
+    isActive?: boolean;
 }

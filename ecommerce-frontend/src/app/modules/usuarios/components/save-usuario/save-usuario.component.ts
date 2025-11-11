@@ -55,7 +55,7 @@ export class SaveUsuarioComponent implements OnInit {
 
         const formValue = this.form.value;
         const payload: IUsuario = {
-            id: this.usuario?.id ?? 0, // id si existe
+            id: this.usuario?.id, // id si existe
             email: formValue.email,
             password: formValue.password,
             roles: formValue.roles,

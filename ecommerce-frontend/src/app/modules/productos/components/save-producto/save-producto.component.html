@@ -1,0 +1,41 @@
+<div class="flex flex-col w-full h-full">
+    <form [formGroup]="form" class="space-y-6 mb-4">
+        <!-- Nombre -->
+        <div class="flex flex-col gap-2 w-full">
+            <label for="name" class="text-sm font-semibold">Nombre</label>
+            <input pInputText type="text" id="name" formControlName="name" pSize="small"
+                placeholder="Ingrese Nombre" class="w-full" [invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+            />
+            <small *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched" class="text-red-500">
+                El nombre es obligatorio
+            </small>
+        </div>  
+        <div class="flex flex-col sm:flex-row gap-2">
+            <!-- Precio -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="price" class="text-sm font-semibold">Precio</label>
+                <input pInputText type="text" id="price" formControlName="price" pSize="small" (blur)="formatPrice()" (input)="onPriceInput($event)"
+                    placeholder="Ingrese Precio" class="w-full" [invalid]="form.get('price')?.invalid && form.get('price')?.touched"
+                />
+                <small *ngIf="form.get('price')?.hasError('required') && form.get('price')?.touched" class="text-red-500">
+                    El precio es obligatorio
+                </small>
+            </div>  
+            <!-- Stock -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="stock" class="text-sm font-semibold">Stock</label>
+                <input pInputText type="number" id="stock" formControlName="stock" pSize="small"
+                    placeholder="Ingrese Stock" class="w-full" [invalid]="form.get('stock')?.invalid && form.get('stock')?.touched"
+                />
+                <small *ngIf="form.get('stock')?.hasError('required') && form.get('stock')?.touched" class="text-red-500">
+                    El stock es obligatorio
+                </small>
+            </div>  
+        </div>
+    </form>
+    <p-divider></p-divider>
+    <div class="flex justify-between">
+        <button pButton label="Cancelar" severity="danger" (click)="onDialogHide()" type="button" size="small"></button>
+        <button pButton label="Guardar" icon="pi pi-check" (click)="onSubmit()" size="small"></button>
+    </div>
+</div>

@@ -7,6 +7,8 @@ import { AppAlertService } from "../../../shared/service/alert.service";
 import { ConfirmationService } from "primeng/api";
 import { IProducto } from "../model/producto.model";
 import { formatCurrency } from "../../../utils/format.helper";
+import { SaveProductoComponent } from "./save-producto/save-producto.component";
+import { ProductosService } from "../service/productos.service";
 
 @Component({
     selector: 'app-productos',
@@ -32,6 +34,7 @@ export class ProductosComponent implements OnInit {
         private dialogService: DialogService,
         private _alertService: AppAlertService,
         private _confirmationService: ConfirmationService,
+        private _productosService: ProductosService
     ) {}
 
     ngOnInit(): void {
@@ -59,48 +62,48 @@ export class ProductosComponent implements OnInit {
     }
 
     onCreate() {
-        // const ref = this.dialogService.open(SaveUsuarioComponent, {
-        //     header: 'Crear Usuario',
-        //     styleClass: 'p-fluid',
-        //     modal: true,
-        //     dismissableMask: false,
-        //     focusOnShow: false,
-        //     closable: true,
-        //     breakpoints: {
-        //         '960px': '85vw',
-        //         '640px': '90vw'
-        //     },
-        // });
+        const ref = this.dialogService.open(SaveProductoComponent, {
+            header: 'Crear Producto',
+            styleClass: 'p-fluid',
+            modal: true,
+            dismissableMask: false,
+            focusOnShow: false,
+            closable: true,
+            breakpoints: {
+                '960px': '85vw',
+                '640px': '90vw'
+            },
+        });
     
-        // ref?.onClose.subscribe((result: { ok: boolean; mensaje: string }) => {
-        //     if (result?.ok) {
-        //         this._alertService.success(result.mensaje);
-        //         this.tablaDinamica.loadData({ first: 0, rows: 10 });
-        //     }
-        // });
+        ref?.onClose.subscribe((result: { ok: boolean; mensaje: string }) => {
+            if (result?.ok) {
+                this._alertService.success(result.mensaje);
+                this.tablaDinamica.loadData({ first: 0, rows: 10 });
+            }
+        });
     }
 
-    onEdit(row: any) {
-        // const ref = this.dialogService.open(SaveUsuarioComponent, {
-        //     header: 'Editar Usuario',
-        //     data: row,
-        //     styleClass: 'p-fluid',
-        //     modal: true,
-        //     dismissableMask: false,
-        //     focusOnShow: false,
-        //     closable: true,
-        //     breakpoints: {
-        //         '960px': '85vw',
-        //         '640px': '90vw'
-        //     },
-        // });
+    onEdit(row: IProducto) {
+        const ref = this.dialogService.open(SaveProductoComponent, {
+            header: 'Editar Producto',
+            data: row,
+            styleClass: 'p-fluid',
+            modal: true,
+            dismissableMask: false,
+            focusOnShow: false,
+            closable: true,
+            breakpoints: {
+                '960px': '85vw',
+                '640px': '90vw'
+            },
+        });
     
-        // ref?.onClose.subscribe((result: { ok: boolean; mensaje: string }) => {
-        //     if (result?.ok) {
-        //         this._alertService.success(result.mensaje);
-        //         this.tablaDinamica.loadData({ first: 0, rows: 10 });
-        //     }
-        // });
+        ref?.onClose.subscribe((result: { ok: boolean; mensaje: string }) => {
+            if (result?.ok) {
+                this._alertService.success(result.mensaje);
+                this.tablaDinamica.loadData({ first: 0, rows: 10 });
+            }
+        });
     }
 
     onDeactivate(row: IProducto) {
@@ -134,17 +137,17 @@ export class ProductosComponent implements OnInit {
     }
 
     private updateStatus(id: number, isActive: boolean) {
-        // this._usuariosService.updateUsuario(id, { isActive }).subscribe({
-        //     next: () => {
-        //         this._alertService.success(
-        //         `Usuario ${isActive ? 'activado' : 'desactivado'} correctamente`
-        //         );
-        //         this.tablaDinamica.loadData({ first: 0, rows: 10 });
-        //     },
-        //     error: (err) => {
-        //         console.error(err);
-        //         this._alertService.error('No se pudo actualizar el estado del usuario');
-        //     }
-        // });
+        this._productosService.updateProducto(id, { isActive }).subscribe({
+            next: () => {
+                this._alertService.success(
+                `Producto ${isActive ? 'activado' : 'desactivado'} correctamente`
+                );
+                this.tablaDinamica.loadData({ first: 0, rows: 10 });
+            },
+            error: (err) => {
+                console.error(err);
+                this._alertService.error('No se pudo actualizar el estado del usuario');
+            }
+        });
     }
 }

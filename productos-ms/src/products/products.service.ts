@@ -25,7 +25,7 @@ export class ProductsService {
     }
 
     async findAll() {
-        return await this.productRepo.find({ where: { isActive: true } });
+        return await this.productRepo.find();
     }
 
     async findOne(id: number) {
