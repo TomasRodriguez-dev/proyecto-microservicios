@@ -1,0 +1,81 @@
+<div class="flex flex-col w-full h-full">
+    <form [formGroup]="form" class="space-y-6 mb-4">
+        <div class="flex flex-col sm:flex-row gap-2">
+            <!-- Email -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="email" class="text-sm font-semibold">Email</label>
+                <input pInputText type="email" id="email" formControlName="email" pSize="small"
+                    placeholder="Ingrese Email" class="w-full" [invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+                />
+                <small *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched" class="text-red-500">
+                    El email es obligatorio
+                </small>
+                <small *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched" class="text-red-500">
+                    El email no es válido
+                </small>
+            </div>  
+            <!-- Password -->
+            <div class="flex flex-col gap-2 w-full" *ngIf="!usuario?.id">
+                <label for="password" class="text-sm font-semibold">Contraseña</label>
+                <p-password formControlName="password" inputId="password" [feedback]="true" size="small" appendTo="body"
+                    [toggleMask]="true" placeholder="Ingrese Contraseña" class="w-full" inputStyleClass="w-full"
+                    [invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+                >
+                    <ng-template pTemplate="header">
+                        <div class="font-semibold text-sm mb-2">Requisitos de la contraseña</div>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <p-divider></p-divider>
+                        <ul class="pl-2 my-0 leading-normal text-sm space-y-1">
+                            <li *ngIf="!hasLower">Al menos una minúscula</li>
+                            <li *ngIf="!hasUpper">Al menos una mayúscula</li>
+                            <li *ngIf="!hasNumber">Al menos un número</li>
+                            <li *ngIf="!hasMinLength">Mínimo 8 caracteres</li>
+                        </ul>
+                    </ng-template>
+                </p-password>
+                <small *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched" class="text-red-500">
+                    La contraseña es obligatorio
+                </small>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <!-- Nombre -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="firstName" class="text-sm font-semibold">Nombre</label>
+                <input pInputText type="text" id="firstName" formControlName="firstName" pSize="small"
+                    placeholder="Ingrese Nombre" class="w-full" [invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+                />
+                <small *ngIf="form.get('firstName')?.hasError('required') && form.get('firstName')?.touched" class="text-red-500">
+                    El Nombre es obligatorio
+                </small>
+            </div>  
+            <!-- Apellido -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="lastName" class="text-sm font-semibold">Apellido</label>
+                <input pInputText type="text" id="lastName" formControlName="lastName" pSize="small"
+                    placeholder="Ingrese Apellido" class="w-full" [invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+                />
+                <small *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched" class="text-red-500">
+                    El Apellido es obligatorio
+                </small>
+            </div>
+            <!-- Rol -->
+            <div class="flex flex-col gap-2 w-full">
+                <label for="roles" class="text-sm font-semibold">Rol</label>
+                <p-select formControlName="roles" [options]="rolesDisponibles" placeholder="Seleccione Rol" size="small"
+                    optionLabel="label" optionValue="value" styleClass="w-full"
+                    [invalid]="form.get('roles')?.invalid && form.get('roles')?.touched">
+                </p-select>
+                <small *ngIf="form.get('roles')?.hasError('required') && form.get('roles')?.touched" class="text-red-500">
+                    El rol es obligatorio
+                </small>
+            </div>  
+        </div>
+    </form>
+    <p-divider></p-divider>
+    <div class="flex justify-between">
+        <button pButton label="Cancelar" severity="danger" (click)="onDialogHide()" type="button" size="small"></button>
+        <button pButton label="Guardar" icon="pi pi-check" (click)="onSubmit()" size="small"></button>
+    </div>
+</div>

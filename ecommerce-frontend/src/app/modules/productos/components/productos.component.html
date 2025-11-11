@@ -1,0 +1,14 @@
+<app-tabla-dinamica
+    class="p-4"
+    [endpoint]="env"
+    [columns]="columns"
+    [headers]="headers"
+    [formatters]="formatters"
+    [actions]="actions"
+    title="Productos"
+    actionLabel="Crear Producto"
+    actionIcon="pi pi-cart-plus"
+    (actionClick)="onCreate()"
+></app-tabla-dinamica>
+
+<p-confirmDialog></p-confirmDialog>

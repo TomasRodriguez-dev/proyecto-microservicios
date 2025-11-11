@@ -55,19 +55,24 @@ export class UsersController {
         return this.users.findById(+id);
     }
 
-    @ApiOperation({ summary: 'Actualizar usuario (Usuario Autenticado: email/password; ADMIN: también roles/isActive)' })
+    @Patch(':id')
+    @ApiOperation({ summary: 'Actualizar usuario (Usuario Autenticado o ADMIN)' })
     @ApiOkResponse({ description: 'Usuario actualizado', type: UserResponse })
     @ApiUnauthorizedResponse({ description: 'Token inválido o ausente' })
     @ApiForbiddenResponse({ description: 'Solo ADMIN puede roles/isActive' })
     @UseGuards(SelfOrAdminGuard)
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() dto: UpdateUserDto, @Req() req: any) {
+    update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+    @Req() req: any
+    ) {
         const isAdmin = req.user?.roles?.includes('ADMIN');
         const triesAdminOnly = dto.roles !== undefined || dto.isActive !== undefined;
+
         if (!isAdmin && triesAdminOnly) {
             throw new ForbiddenException('Solo ADMIN puede modificar roles o estado');
         }
-        const data = isAdmin ? dto : { email: dto.email, password: dto.password };
-        return this.users.update(+id, data, isAdmin);
+
+        return this.users.update(+id, dto, isAdmin);
     }
 }

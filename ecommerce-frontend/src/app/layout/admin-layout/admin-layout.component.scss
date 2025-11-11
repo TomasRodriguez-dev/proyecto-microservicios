@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+aside {
+  min-height: 100%;
+}
+
+:host ::ng-deep .active-link {
+  background-color: var(--p-primary-500);   /* Fondo suave */
+  color: #fff;             /* Texto principal */
+  font-weight: 600;
+  border-radius: 1rem;                   /* Esquinas redondeadas */
+}
+
+:host ::ng-deep .active-link i {
+  color: #fff;             /* Ícono también en primario */
+}
+
+:host ::ng-deep .active-link span {
+  color: #fff;             /* label también en primario */
+}

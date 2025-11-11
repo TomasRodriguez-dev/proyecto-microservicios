@@ -1,0 +1,48 @@
+<!-- Template dinámico para el popover -->
+<ng-template #passwordTemplate let-row>
+  <h3 class="text-sm font-semibold mb-2">Cambiar Contraseña</h3>
+  <div class="flex flex-col gap-2">
+    <p-password [(ngModel)]="newPassword"
+                placeholder="Nueva contraseña" inputStyleClass="w-full"
+                [feedback]="true" toggleMask size="small" class="w-full">
+      <ng-template pTemplate="header">
+        <div class="font-semibold text-sm mb-2">Requisitos de la contraseña</div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <p-divider></p-divider>
+        <ul class="pl-2 my-0 leading-normal text-sm space-y-1">
+          <li *ngIf="!hasLower">Al menos una minúscula</li>
+          <li *ngIf="!hasUpper">Al menos una mayúscula</li>
+          <li *ngIf="!hasNumber">Al menos un número</li>
+          <li *ngIf="!hasMinLength">Mínimo 8 caracteres</li>
+        </ul>
+      </ng-template>
+    </p-password>
+
+    <div class="flex justify-end gap-2 mt-2">
+      <button pButton type="button" label="Cancelar"
+              size="small" severity="danger"
+              (click)="onCancelPassword()"></button>
+
+      <button pButton type="button" label="Guardar"
+              size="small" icon="pi pi-check"
+              (click)="confirmChangePassword()"></button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- La tabla dinámica -->
+<app-tabla-dinamica
+  class="p-4"
+  [endpoint]="env"
+  [columns]="columns"
+  [headers]="headers"
+  [formatters]="formatters"
+  [actions]="actions"
+  title="Usuarios"
+  actionLabel="Crear Usuario"
+  actionIcon="pi pi-user-plus"
+  (actionClick)="onCreate()"
+></app-tabla-dinamica>
+
+<p-confirmDialog></p-confirmDialog>

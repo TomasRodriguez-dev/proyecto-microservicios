@@ -1,0 +1,243 @@
+<div class="flex flex-1 justify-center h-full items-start p-4 overflow-y-auto lg:overflow-hidden">
+  <div class="flex flex-col lg:flex-row gap-4 w-full h-full">
+    <!-- === COLUMNA IZQUIERDA (Perfil) === -->
+    <div class="flex-1 lg:max-w-sm">
+      <p-card class="perfil-card overflow-hidden shadow-lg border-0 rounded-2xl bg-white dark:bg-gray-800 flex flex-col h-full">
+        <!-- === Banner con avatar integrado === -->
+        <div class="relative h-44 bg-gradient-to-br from-blue-500 via-indigo-500 to-blue-600 rounded-t-2xl flex items-end justify-center">
+          <!-- Avatar centrado sobre el borde inferior -->
+          <div class="absolute -bottom-10">
+            <div class="relative">
+              <ng-container *ngIf="previewUrl || user?.avatarUrl; else initials">
+                <p-avatar
+                  [image]="previewUrl || user.avatarUrl"
+                  shape="circle"
+                  size="xlarge"
+                  style="width: 7rem; height: 7rem;"
+                  class="shadow-xl border-4 border-white dark:border-gray-800"
+                ></p-avatar>
+              </ng-container>
+
+              <ng-template #initials>
+                <p-avatar
+                  [label]="userInitials"
+                  shape="circle"
+                  size="xlarge"
+                  style="width: 7rem; height: 7rem;"
+                  styleClass="bg-primary text-white font-bold shadow-lg border-4 border-white"
+                ></p-avatar>
+              </ng-template>
+
+              <!-- Botón editar -->
+              <!-- <div class="absolute bottom-2 right-0">
+                <p-button icon="pi pi-pencil" pTooltip="Cambiar foto" (onClick)="fileInput.click()"
+                  styleClass="p-button-rounded p-button-sm bg-primary-600 hover:bg-primary-700 border-none shadow-md text-white"
+                ></p-button> -->
+                <!-- Input oculto -->
+                <!-- <input #fileInput id="avatarInput" type="file" accept="image/*" (change)="onAvatarChange($event)" class="hidden" />
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <!-- === Información del usuario === -->
+        <div class="flex flex-col items-center text-center mt-14 px-4 pb-6">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+            {{ user.firstName }} {{ user.lastName }}
+          </h2>
+          <p class="text-gray-500 text-sm mb-2">{{ user.email }}</p>
+
+          <!-- Roles -->
+          <div class="flex gap-2 mt-2 flex-wrap justify-center">
+            <p-tag *ngFor="let role of user.roles"
+              severity="info"
+              [value]="role"
+              styleClass="uppercase tracking-wide font-semibold text-xs px-3 py-1"
+            ></p-tag>
+          </div>
+
+          <!-- Info breve -->
+          <div class="flex flex-col items-center gap-3 mt-5 text-sm text-gray-700 dark:text-gray-300">
+            <!-- Ciudad + País -->
+            <div class="flex items-center gap-2">
+              <i class="pi pi-map-marker text-blue-500"></i>
+              <span>
+                {{ user.city || 'Sin ciudad' }}, {{ user.country || 'Sin país' }}
+              </span>
+            </div>
+            <!-- Dirección -->
+            <div class="flex items-center gap-2">
+              <i class="pi pi-home text-blue-500"></i>
+              <span>
+                {{ user.addressLine || 'Sin dirección' }}
+              </span>
+            </div>
+            <!-- Fecha de nacimiento -->
+            <div class="flex items-center gap-2">
+              <i class="pi pi-user text-blue-500"></i>
+              <span>
+                Fecha de nac.: 
+                <strong>{{ user.birthDate ? (user.birthDate | date:'dd/MM/yyyy') : 'No especificada' }}</strong>
+              </span>
+            </div>
+            <!-- Miembro desde -->
+            <div class="flex items-center gap-2">
+              <i class="pi pi-calendar text-blue-500"></i>
+              <span>
+                Miembro desde <strong>{{ user.createdAt | date:'MMM yyyy' }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Botón Editar información breve -->
+        <div class="mt-4 w-full flex justify-center" *ngIf="!editing">
+          <p-button 
+            label="Editar información" 
+            icon="pi pi-pencil"
+            styleClass="p-button-outlined p-button-sm"
+            (onClick)="confirmEdit()"
+          ></p-button>
+        </div>
+      </p-card>
+    </div>
+    <!-- === COLUMNA DERECHA (Datos) === -->
+    <div class="flex flex-col flex-1">
+      <div class="card-derecha flex flex-col h-full rounded-2xl shadow-md border-0 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md overflow-hidden transition-all duration-300">
+        <!-- === INFORMACIÓN PERSONAL === -->
+        <div class="p-4 flex-none">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+            Información Personal
+          </h3>
+          <form [formGroup]="form" class="flex flex-col md:flex-wrap gap-4">
+            <!-- Nombre y Apellido -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <!-- Nombre -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="firstName" class="text-sm font-semibold">Nombre</label>
+                  <input pInputText type="text" id="firstName" formControlName="firstName" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Nombre' : ''" class="w-full" [invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+                  />
+                  <small *ngIf="form.get('firstName')?.hasError('required') && form.get('firstName')?.touched && editing" class="text-red-500">
+                      El Nombre es obligatorio
+                  </small>
+              </div>  
+              <!-- Apellido -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="lastName" class="text-sm font-semibold">Apellido</label>
+                  <input pInputText type="text" id="lastName" formControlName="lastName" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Apellido' : ''" class="w-full" [invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+                  />
+                  <small *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched && editing" class="text-red-500">
+                      El Apellido es obligatorio
+                  </small>
+              </div>
+            </div>
+            <!-- Pais y Fecha de Nacimiento -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <!-- Pais -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="country" class="text-sm font-semibold">País</label>
+                  <input pInputText type="text" id="country" formControlName="country" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese País' : ''" class="w-full" [invalid]="form.get('country')?.invalid && form.get('country')?.touched"
+                  />
+                  <small *ngIf="form.get('country')?.hasError('required') && form.get('country')?.touched && editing" class="text-red-500">
+                      El País es obligatorio
+                  </small>
+              </div>  
+              <!-- Fecha de Nacimiento -->
+              <div class="flex flex-col gap-2 w-full">
+                <label for="birthDate" class="text-sm font-semibold">Fecha de Nacimiento</label>
+                <p-datepicker formControlName="birthDate" showIcon="true" dateFormat="dd/mm/yy" size="small"
+                  [placeholder]="editing ? 'Ingrese Fecha de Nacimiento' : ''" inputStyleClass="w-full" [readonlyInput]="true"
+                  [ngClass]="{'ng-invalid ng-dirty': form.get('birthDate')?.invalid && form.get('birthDate')?.touched}"
+                ></p-datepicker>
+                <div
+                  *ngIf="!editing"
+                  class="absolute inset-0 cursor-not-allowed bg-transparent z-10"
+                ></div>
+                <small *ngIf="form.get('birthDate')?.hasError('required') && form.get('birthDate')?.touched && editing"
+                  class="text-red-500">
+                  La Fecha de Nacimiento es obligatoria
+                </small>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- === DIVIDER === -->
+        <p-divider align="center" class="m-0"></p-divider>
+        <!-- === INFORMACIÓN DE CONTACTO === -->
+        <div class="p-4 flex-none">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+            Información de Contacto
+          </h3>
+          <form [formGroup]="form" class="flex flex-col md:flex-wrap gap-4">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <!-- Telefono -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="phone" class="text-sm font-semibold">Teléfono</label>
+                  <input pInputText type="text" id="phone" formControlName="phone" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Teléfono' : ''" class="w-full" [invalid]="form.get('phone')?.invalid && form.get('phone')?.touched"
+                  />
+                  <small *ngIf="form.get('phone')?.hasError('required') && form.get('phone')?.touched && editing" class="text-red-500">
+                      El Teléfono es obligatorio
+                  </small>
+              </div>  
+              <!-- Provincia -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="state" class="text-sm font-semibold">Provincia</label>
+                  <input pInputText type="text" id="state" formControlName="state" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Provincia' : ''" class="w-full" [invalid]="form.get('state')?.invalid && form.get('state')?.touched"
+                  />
+                  <small *ngIf="form.get('state')?.hasError('required') && form.get('state')?.touched && editing" class="text-red-500">
+                      La Provincia es obligatoria
+                  </small>
+              </div>  
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <!-- Ciudad -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="city" class="text-sm font-semibold">Ciudad</label>
+                  <input pInputText type="text" id="city" formControlName="city" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Ciudad' : ''" class="w-full" [invalid]="form.get('city')?.invalid && form.get('city')?.touched"
+                  />
+                  <small *ngIf="form.get('city')?.hasError('required') && form.get('city')?.touched && editing" class="text-red-500">
+                      La Ciudad es obligatoria
+                  </small>
+              </div>  
+              <!-- Dirección -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="addressLine" class="text-sm font-semibold">Dirección</label>
+                  <input pInputText type="text" id="addressLine" formControlName="addressLine" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Dirección' : ''" class="w-full" [invalid]="form.get('addressLine')?.invalid && form.get('addressLine')?.touched"
+                  />
+                  <small *ngIf="form.get('addressLine')?.hasError('required') && form.get('addressLine')?.touched && editing" class="text-red-500">
+                      La Dirección es obligatoria
+                  </small>
+              </div>  
+              <!-- Codigo Postal -->
+              <div class="flex flex-col gap-2 w-full">
+                  <label for="postalCode" class="text-sm font-semibold">Código Postal</label> 
+                  <input pInputText type="text" id="postalCode" formControlName="postalCode" pSize="small" [readonly]="!editing"
+                      [placeholder]="editing ? 'Ingrese Código Postal' : ''" class="w-full" [invalid]="form.get('postalCode')?.invalid && form.get('postalCode')?.touched"
+                  />
+                  <small *ngIf="form.get('postalCode')?.hasError('required') && form.get('postalCode')?.touched && editing" class="text-red-500">
+                      El Código Postal es obligatorio
+                  </small>
+              </div>  
+            </div>
+          </form>
+        </div>
+        <!-- === BOTONES === -->
+        <div class="flex justify-end gap-3 p-4 mt-auto bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-b-2xl"
+          *ngIf="editing">
+          <p-button label="Cancelar" severity="danger" styleClass="p-button-sm"
+            (onClick)="onCancelEdit()"
+          ></p-button>
+          <p-button label="Guardar cambios" icon="pi pi-save" styleClass="p-button-sm"
+            (onClick)="onSave()"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-confirmDialog></p-confirmDialog>

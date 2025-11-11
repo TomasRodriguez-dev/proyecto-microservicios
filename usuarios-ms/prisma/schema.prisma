@@ -13,9 +13,23 @@ model User {
   password  String
   roles     String                 // 'ADMIN,USER'
   isActive  Boolean  @default(true)
+  // Datos basicos de identidad
+  firstName    String?
+  lastName     String?
+  phone        String?
+  // Dirección principal (puede usarse para envío o facturación)
+  addressLine  String?               // Direccion (Calle y número)
+  city         String?               // Ciudad
+  state        String?               // Provincia / Estado
+  postalCode   String?               // Codigo Postal
+  country      String?               // Pais
+  // Datos generales
+  avatarUrl    String?               // Imagen de perfil
+  birthDate    DateTime?             // Opcional
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relaciones
   carts     Cart[]
 
   @@index([email])

@@ -1,0 +1,88 @@
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <aside [ngClass]="{'w-64': !collapsed, 'w-16': collapsed}"
+    class="bg-white shadow-md transition-all duration-300 flex flex-col">
+
+    <!-- Botón para colapsar/expandir -->
+    <div class="flex items-center justify-end p-2">
+      <button (click)="toggleSidebar()"
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-200 
+          hover:text-[var(--p-primary-600)] transition-colors">
+        <i class="pi text-xl" [ngClass]="collapsed ? 'pi-angle-right' : 'pi-angle-left'"></i>
+      </button>
+    </div>
+
+    <!-- Menú con Tailwind -->
+    <ul class="flex flex-col mt-4">
+      <li *ngFor="let item of menuItems">
+        <a [routerLink]="item.routerLink"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 px-4 py-2 text-gray-700 
+            hover:bg-[var(--p-primary-50)] 
+            hover:text-[var(--p-primary-600)] 
+            rounded-lg transition-colors"
+          pTooltip="{{collapsed ? item.label : ''}}" tooltipPosition="right">
+          <i class="{{item.icon}} text-lg"></i>
+          <span *ngIf="!collapsed">{{item.label}}</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="flex flex-col flex-1">
+    <!-- Encabezado -->
+    <p-menubar class="shadow-sm bg-white px-4">
+      <!-- Logo o título -->
+      <ng-template pTemplate="start">
+        <span class="font-bold text-lg text-gray-700">Panel de Administración</span>
+      </ng-template>
+
+      <!-- Menú de usuario (derecha) -->
+      <ng-template pTemplate="end">
+        <p-tieredMenu #userMenu [model]="userMenuItems" popup appendTo="body"></p-tieredMenu>
+
+        <div class="flex items-center gap-2 cursor-pointer px-2 py-1 rounded-full hover:bg-gray-100 transition"
+            (click)="userMenu.toggle($event)">
+
+          <!-- Avatar -->
+          <ng-container *ngIf="user?.avatarUrl; else initials">
+            <p-avatar [image]="user?.avatarUrl" shape="circle" size="normal"></p-avatar>
+          </ng-container>
+
+          <!-- Iniciales si no hay avatar -->
+          <ng-template #initials>
+            <ng-container *ngIf="userInitials; else fallback">
+              <p-avatar [label]="userInitials"
+                        shape="circle" size="normal"
+                        styleClass="bg-primary-600 text-white font-bold">
+              </p-avatar>
+            </ng-container>
+          </ng-template>
+
+          <!-- Fallback: ícono usuario -->
+          <ng-template #fallback>
+            <p-avatar icon="pi pi-user" shape="circle" size="normal"
+                      styleClass="bg-gray-200 text-gray-600">
+            </p-avatar>
+          </ng-template>
+
+          <!-- Nombre o email -->
+          <span class="hidden sm:block font-medium text-gray-700 whitespace-nowrap">
+            {{ user?.firstName && user?.lastName ? (user?.firstName + ' ' + user?.lastName) : (user?.email || 'Sin datos') }}
+          </span>
+
+          <!-- Flecha de despliegue -->
+          <i class="pi pi-angle-down text-gray-500"></i>
+        </div>
+      </ng-template>
+    </p-menubar>
+
+    <!-- Contenido dinámico -->
+    <main class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+</div>

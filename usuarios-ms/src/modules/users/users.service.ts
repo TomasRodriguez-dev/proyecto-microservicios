@@ -22,30 +22,36 @@ export class UsersService {
         return toPublicUser(u);
     }
 
-    async create(email: string, password: string, roles = 'USER') {
-        const exists = await this.repo.findByEmail(email);
+    async create(dto: any) {
+        const exists = await this.repo.findByEmail(dto.email);
         if (exists) throw RpcError.badRequest('Email ya registrado');
-        const hash = await bcrypt.hash(password, 10);
-        return toPublicUser(await this.repo.create({ email, password: hash, roles }));
+
+        const hash = await bcrypt.hash(dto.password, 10);
+
+        const data = {
+            ...dto,
+            password: hash,
+            roles: dto.roles || 'USER',
+        };
+
+        return toPublicUser(await this.repo.create(data));
     }
 
     async findMany(params?: { q?: string }) {
         const where = {
-            isActive: true,
             ...(params?.q ? { email: { contains: params.q, mode: 'insensitive' as const } } : {}),
         };
         return (await this.repo.findMany(where)).map(toPublicUser);
     }
 
-    async update(id: number, dto: { email?: string; password?: string; roles?: string; isActive?: boolean }, isAdmin: boolean) {
+    async update(id: number, dto: any, isAdmin: boolean) {
         if (!isAdmin && (dto.roles !== undefined || dto.isActive !== undefined)) {
             throw RpcError.forbidden('Solo ADMIN puede modificar roles o isActive');
         }
-        const data: any = {};
-        if (dto.email) data.email = dto.email;
+
+        const data: any = { ...dto };
+
         if (dto.password) data.password = await bcrypt.hash(dto.password, 10);
-        if (isAdmin && dto.roles !== undefined) data.roles = dto.roles;
-        if (isAdmin && dto.isActive !== undefined) data.isActive = dto.isActive;
 
         try {
             return toPublicUser(await this.repo.update(id, data));

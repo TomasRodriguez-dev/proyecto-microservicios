@@ -1,50 +1,68 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../shared/model/api-response.model';
+import { IUsuario } from '../../../modules/usuarios/model/usuario.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private endpoints = environment.api.auth;
     private sessionTimer: any;
+    private userProfile: IUsuario | null = null;  
 
     constructor(private http: HttpClient) {}
 
+    // === LOGIN ===
     login(credentials: { email: string; password: string }) {
-        return this.http.post<any>(
-            this.endpoints.login,
-            credentials
-        ).pipe(
+        return this.http.post<any>(this.endpoints.login, credentials).pipe(
             tap(res => {
                 if (res.token) {
                     localStorage.setItem('token', res.token);
                 }
-
                 if (res.result?.[0]?.refresh_token) {
                     localStorage.setItem('refresh_token', res.result[0].refresh_token);
                 }
 
                 this.setSessionTimer();
+
+                this.getPerfil().subscribe(profile => {
+                    this.userProfile = profile;
+                    localStorage.setItem('user', JSON.stringify(profile));
+                });
             })
         );
     }
 
+    // === REGISTER ===
     register(data: any) {
         return this.http.post<ApiResponse>(this.endpoints.register, data);
     }
 
+    // === PERFIL ===
     getPerfil() {
-        return this.http.get(this.endpoints.perfil);
+        return this.http.get<ApiResponse>(this.endpoints.perfil).pipe(
+            map(res => res.result?.[0] ?? null)  
+        );
     }
 
+    getUser(): any {
+        if (this.userProfile) return this.userProfile;
+
+        const stored = localStorage.getItem('user');
+        return stored ? JSON.parse(stored) : null;
+    }
+
+    setUser(user: IUsuario): void {
+        this.userProfile = user;
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    // === REFRESH TOKEN ===
     refresh(): Observable<{ token: string }> {
         const refresh_token = localStorage.getItem('refresh_token');
-        return this.http.post<{ token: string }>(
-            this.endpoints.refresh,
-            { refresh_token }
-        ).pipe(
+        return this.http.post<{ token: string }>(this.endpoints.refresh, { refresh_token }).pipe(
             tap(res => {
                 localStorage.setItem('token', res.token);
                 this.setSessionTimer();
@@ -52,12 +70,16 @@ export class AuthService {
         );
     }
 
+    // === LOGOUT ===
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
-        if  (this.sessionTimer) clearTimeout(this.sessionTimer);
+        localStorage.removeItem('user');
+        this.userProfile = null;
+        if (this.sessionTimer) clearTimeout(this.sessionTimer);
     }
 
+    // === TOKEN ===
     get token() {
         return localStorage.getItem('token');
     }
@@ -74,6 +96,7 @@ export class AuthService {
         }
     }
 
+    // === SESIÓN Y TIMER ===
     private getTokenExpiration(): number | null {
         const token = this.token;
         if (!token) return null;
@@ -85,41 +108,31 @@ export class AuthService {
         }
     }
 
-   setSessionTimer() {
-  const exp = this.getTokenExpiration();
-  if (!exp) {
-    console.warn('[AuthService] No se pudo obtener exp del token');
-    return;
-  }
+    setSessionTimer() {
+        const exp = this.getTokenExpiration();
+        if (!exp) {
+            console.warn('[AuthService] No se pudo obtener exp del token');
+            return;
+        }
 
-  const timeLeft = exp - Date.now();
-  console.log(`[AuthService] Token expira en: ${(timeLeft / 1000).toFixed(0)}s`);
+        const timeLeft = exp - Date.now();
+        const timeout = timeLeft - 60_000; // un minuto antes de expirar
 
-  // disparamos evento 1 min antes (configurable)
-  const timeout = timeLeft - 60_000;
+        if (timeout > 0) {
+            this.sessionTimer = setTimeout(() => {
+                const event = new CustomEvent('session-expiring');
+                window.dispatchEvent(event);
 
-  if (timeout > 0) {
-    console.log(`[AuthService] Programando aviso en ${(timeout / 1000).toFixed(0)}s`);
-
-    this.sessionTimer = setTimeout(() => {
-      console.log('[AuthService] ⚠️ Token por expirar → disparo evento session-expiring');
-      const event = new CustomEvent('session-expiring');
-      window.dispatchEvent(event);
-
-      // además, mientras está abierto el modal, podemos loguear countdown
-      let countdown = 60;
-      const interval = setInterval(() => {
-        countdown--;
-        console.log(`[SessionModal] quedan ${countdown}s`);
-        if (countdown <= 0) clearInterval(interval);
-      }, 1000);
-
-    }, timeout);
-  } else {
-    console.warn('[AuthService] El token ya está cerca de expirar, disparando modal inmediato');
-    const event = new CustomEvent('session-expiring');
-    window.dispatchEvent(event);
-  }
-}
-
+                // Cuenta regresiva opcional
+                let countdown = 60;
+                const interval = setInterval(() => {
+                    countdown--;
+                    if (countdown <= 0) clearInterval(interval);
+                }, 1000);
+            }, timeout);
+        } else {
+            const event = new CustomEvent('session-expiring');
+            window.dispatchEvent(event);
+        }
+    }
 }

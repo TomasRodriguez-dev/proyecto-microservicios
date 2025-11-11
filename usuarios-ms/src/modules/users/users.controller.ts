@@ -7,22 +7,30 @@ export class UsersController {
     constructor(private readonly users: UsersService) {}
 
     @MessagePattern('users.findById')
-    findById(@Payload() { id }: { id: number }) { return this.users.findById(id); }
+    findById(@Payload() { id }: { id: number }) {
+        return this.users.findById(id);
+    }
 
     @MessagePattern('users.create')
-    create(@Payload() { email, password, roles }: { email: string; password: string; roles?: string }) {
-        return this.users.create(email, password, roles);
+    create(@Payload() dto: any) {
+        return this.users.create(dto);
     }
 
     @MessagePattern('users.findMany')
-    findMany(@Payload() query: { page?: number; limit?: number; q?: string }) { return this.users.findMany(query); }
+    findMany(@Payload() query: any) {
+        return this.users.findMany(query);
+    }
 
     @MessagePattern('users.findManyByIds')
-    findManyByIds(@Payload() { ids }: { ids: number[] }) { return this.users.findMany({});}
+    findManyByIds(@Payload() { ids }: { ids: number[] }) {
+        return this.users.findMany({});
+    }
 
     @MessagePattern('users.update')
-    update(@Payload() { id, data, isAdmin }:
-        { id: number; data: { email?: string; password?: string; roles?: string; isActive?: boolean }; isAdmin?: boolean }) {
+    update(
+        @Payload()
+        { id, data, isAdmin }: { id: number; data: any; isAdmin?: boolean },
+    ) {
         return this.users.update(id, data, !!isAdmin);
     }
 }

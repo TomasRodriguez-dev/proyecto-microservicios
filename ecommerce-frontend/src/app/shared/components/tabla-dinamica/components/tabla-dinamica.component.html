@@ -1,0 +1,57 @@
+<div class="card">
+  <div class="flex justify-between items-center mb-3 px-2">
+    <h2 class="text-xl font-semibold text-gray-700">{{ title }}</h2>
+    <p-button *ngIf="actionLabel"
+      [label]="actionLabel"
+      [icon]="actionIcon"
+      (onClick)="onActionClick()"
+      size="small">
+    </p-button>
+  </div>
+
+  <p-table [value]="data" [paginator]="true" [rows]="10" [lazy]="true"
+      [totalRecords]="totalRecords" [loading]="loading"
+      (onLazyLoad)="loadData($event)"
+      [rowsPerPageOptions]="[5,10,20,50]"
+      styleClass="p-datatable-striped">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let header of headers">{{ header }}</th>
+        <th *ngIf="actions?.length" class="w-[50px] text-center"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td *ngFor="let col of columns">{{ row[col] }}</td>
+        <td *ngIf="actions?.length" class="text-center">
+          <p-button icon="pi pi-ellipsis-h" [rounded]="true"
+                    (onClick)="openMenu($event, row, menu)" size="small">
+          </p-button>
+          <p-tieredMenu #menu [model]="menuItems" popup appendTo="body">
+            <ng-template pTemplate="item" let-item>
+              <a [ngClass]="item.styleClass" class="flex items-center gap-2 px-3 py-2 rounded cursor-pointer">
+                <i [class]="item.icon"></i>
+                <span>{{ item.label }}</span>
+              </a>
+            </ng-template>
+          </p-tieredMenu>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="headers.length + 1" class="text-center text-gray-400">
+          No se encontraron registros.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Popover único -->
+  <p-popover #dynamicPopover [target]="popoverTarget" appendTo="body">
+    <ng-container *ngTemplateOutlet="currentPopoverTemplate; context: {$implicit: currentRow}"></ng-container>
+  </p-popover>
+</div>

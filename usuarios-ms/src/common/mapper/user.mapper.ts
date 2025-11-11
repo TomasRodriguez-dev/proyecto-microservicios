@@ -1,6 +1,18 @@
-export const toPublicUser = (u: any) => ({
-    id: u.id,
-    email: u.email,
-    roles: String(u.roles || '').split(',').map(r => r.trim()).filter(Boolean),
-    isActive: u.isActive,
+export const toPublicUser = (user: any) => ({
+    id: user.id,
+    email: user.email,
+    roles: user.roles ? user.roles.split(',') : [],
+    isActive: user.isActive,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    addressLine: user.addressLine,
+    city: user.city,
+    state: user.state,
+    postalCode: user.postalCode,
+    country: user.country,
+    avatarUrl: user.avatarUrl,
+    birthDate: user.birthDate,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
 });
